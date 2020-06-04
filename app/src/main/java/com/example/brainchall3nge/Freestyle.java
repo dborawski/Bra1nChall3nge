@@ -3,6 +3,7 @@ package com.example.brainchall3nge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -26,6 +27,7 @@ public class Freestyle extends AppCompatActivity{
     Button btn2;
     Button btn3;
     Button btn4;
+    Button pauseButton;
     TextView heart;
     public int option1;
     public int option2;
@@ -35,7 +37,9 @@ public class Freestyle extends AppCompatActivity{
     public int min=0;
     public String seconds;
     public String minutes;
+    public String question;
     public int b;
+    public int level=1;
     public int solution;
     public int whichCorrect;
     public int points = 0;
@@ -45,6 +49,7 @@ public class Freestyle extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_freestyle);
+        pauseButton = findViewById(R.id.pauseButton);
         heart = findViewById(R.id.chances);
         board = findViewById(R.id.BoardTable);
         top = findViewById(R.id.infoTable);
@@ -63,21 +68,47 @@ public class Freestyle extends AppCompatActivity{
         finish();
     }
     public void pauseGame(View view){
-        if (!isPaused){
-            isPaused = true;
-            btn1.setEnabled(false);
-            btn2.setEnabled(false);
-            btn3.setEnabled(false);
-            btn4.setEnabled(false);
+        if (!lose && !win){
+                if (!isPaused){
+                    isPaused = true;
+                    btn1.setEnabled(false);
+                    btn2.setEnabled(false);
+                    btn3.setEnabled(false);
+                    btn4.setEnabled(false);
+                    String display = "Game paused";
+                    scoreboard.setText(display);
+                    String text = "▶";
+                    pauseButton.setTextSize(38);
+                    pauseButton.setText(text);
+                }else{
+                    isPaused = false;
+                    btn1.setEnabled(true);
+                    btn2.setEnabled(true);
+                    btn3.setEnabled(true);
+                    btn4.setEnabled(true);
+                    scoreboard.setText(question);
+                    String text = "❚❚";
+                    pauseButton.setTextSize(18);
+                    pauseButton.setText(text);
+                }
+                clock();
         }else{
+            String text = "❚❚";
             isPaused = false;
-            btn1.setEnabled(true);
-            btn2.setEnabled(true);
-            btn3.setEnabled(true);
-            btn4.setEnabled(true);
-
+            pauseButton.setTextSize(18);
+            pauseButton.setText(text);
+            win = false;
+            lose = false;
+            time = 0;
+            rounds = 0;
+            chance = 3;
+            min = 0;
+            startGame();
+            /*Intent intent = getIntent();
+            finish();
+            startActivity(intent);*/
         }
-        clock();
+
     }
     public void startGame (){
         if (!win && !lose){
@@ -94,18 +125,7 @@ public class Freestyle extends AppCompatActivity{
         String text = "You win!";
         scoreboard.setText(text);
         win = true;
-        String again = "Play again";
     }
-    /*
-    public void playAgain(View view){
-        win = false;
-        lose = false;
-        time = 0;
-        rounds = 0;
-        chance = 3;
-        min = 0;
-        startGame(view);
-    }*/
     public void displayHearts(){
         switch(chance){
             case 0:
@@ -122,12 +142,32 @@ public class Freestyle extends AppCompatActivity{
                 break;
         }
     }
+    public void setMode(int mode){
+        if (mode == 1 && rounds == 5){
+            level = 2;
+        }
+        if (mode == 2 && rounds == 10){
+            level = 3;
+        }
+
+    }
+// ❚❚
+    public void loseGame(){
+        String display = "You lose";
+        scoreboard.setText(display);
+        scoreboard.setTextColor(Color.parseColor("#E74C3C"));
+        pauseButton.setTextSize(36);
+        String replay = "⟲";
+        pauseButton.setText(replay);
+    }
+
     public void newRound(){
         if(!lose){
                 if (minutes == "03" && seconds == "00"){
                    winGame();
                 }
                 else{
+                    setMode(level);
                     randomize();
                     rounds++;
                     String display = "" + rounds + "/∞";
@@ -136,7 +176,7 @@ public class Freestyle extends AppCompatActivity{
 
         }
         else{
-            //
+            loseGame();
         }
         displayHearts();
     }
@@ -178,13 +218,121 @@ public class Freestyle extends AppCompatActivity{
     }
     public void randomize(){
         Random rand = new Random();
-        option1 = rand.nextInt(100)+1;
-        option2 = rand.nextInt(100)+1;
-        option3 = rand.nextInt(100)+1;
-        option4 = rand.nextInt(100)+1;
+        int randomQuest = rand.nextInt(3)+1;
         a = rand.nextInt(10)+1;
         b = rand.nextInt(10)+1;
-        solution = a*b;
+
+        String text = "";
+        switch(level){
+            case 1:
+                a = rand.nextInt(50)+1;
+                b = rand.nextInt(50)+1;
+                option1 = a+1+b;
+                option2 = a+b+2;
+                option3 = a+b-1;
+                option4 = a+b-2;
+                solution = a+b;
+                text = a + " + " + b;
+                break;
+            case 2:
+                if(randomQuest == 1){
+                    a = rand.nextInt(50)+1;
+                    b = rand.nextInt(50)+1;
+                    solution = a+b;
+
+                    option1 = a+1+b;
+                    option2 = a+b+2;
+                    option3 = a+b-1;
+                    option4 = a+b-2;
+
+                    text = a + " + " + b;
+                }
+                else {
+                    if (a > b) {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = a-b+1;
+                        option2 = a-b+2;
+                        option3 = a-b-1;
+                        option4 = a-b-2;
+                        solution = a - b;
+                        text = a + " - " + b;
+                    }
+                    if (a < b) {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = b-a+1;
+                        option2 = b-a+2;
+                        option3 = b-a-1;
+                        option4 = b-a-2;
+                        solution = b - a;
+                        text = b + " - " + a;
+                    } else {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = a-b+1;
+                        option2 = a-b+2;
+                        option3 = a-b-1;
+                        option4 = a-b-2;
+                        solution = a - b;
+                        text = a + " - " + b;
+                    }
+                }
+                break;
+            case 3:
+                if(randomQuest == 1){
+                    a = rand.nextInt(50)+1;
+                    b = rand.nextInt(50)+1;
+                    option1 = a+1+b;
+                    option2 = a+b+2;
+                    option3 = a+b-1;
+                    option4 = a+b-2;
+                    solution = a+b;
+                    text = a + " + " + b;
+                }
+                if(randomQuest == 2) {
+                    if (a > b) {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = a-b+1;
+                        option2 = a-b+2;
+                        option3 = a-b-1;
+                        option4 = a-b-2;
+                        solution = a - b;
+                        text = a + " - " + b;
+                    }
+                    if (a < b) {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = b-a+1;
+                        option2 = b-a+2;
+                        option3 = b-a-1;
+                        option4 = b-a-2;
+                        solution = b - a;
+                        text = b + " - " + a;
+                    } else {
+                        a = rand.nextInt(50)+1;
+                        b = rand.nextInt(50)+1;
+                        option1 = a-b+1;
+                        option2 = a-b+2;
+                        option3 = a-b-1;
+                        option4 = a-b-2;
+                        solution = a - b;
+                        text = a + " - " + b;
+                    }
+                }
+                else {
+                    option1 = (a+1)*b;
+                    option2 = a*(b+1);
+                    option3 = a*b+1;
+                    option4 = a*b+2;
+                    solution = a * b;
+                    text = a + " * " + b;
+                }
+                break;
+            }
+
+
         whichCorrect = rand.nextInt(4)+1;
         String text1, text2, text3, text4;
         text1 = ""+option1;
@@ -199,7 +347,7 @@ public class Freestyle extends AppCompatActivity{
         btn2.setText(text2);
         btn3.setText(text3);
         btn4.setText(text4);
-        String text = a + "*" + b;
+        question = text;
         scoreboard.setText(text);
     }
     public void check1(View view){
