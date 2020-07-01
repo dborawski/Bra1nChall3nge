@@ -14,8 +14,13 @@ public class Play extends AppCompatActivity {
         setContentView(R.layout.activity_play);
     }
     public void freeStyle(View view){
-        Intent i = new Intent(this, Freestyle.class);
-        startActivity(i);
+        Intent fs = new Intent(this, Freestyle.class);
+        startActivity(fs);
+        finish();
+    }
+    public void speedRun(View view){
+        Intent sr = new Intent(this, Freestyle.class);
+        startActivity(sr);
         finish();
     }
 }

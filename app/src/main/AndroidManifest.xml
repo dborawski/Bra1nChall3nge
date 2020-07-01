@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FreeSt"></activity>
+        <activity android:name=".Speedrun"></activity>
         <activity android:name=".Play" />
         <activity android:name=".Freestyle" />
         <activity android:name=".MainActivity">

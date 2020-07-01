@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -45,6 +46,7 @@ public class Freestyle extends AppCompatActivity{
     public int points = 0;
     public int chance = 3;
     public boolean isPaused = false;
+    public MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +63,12 @@ public class Freestyle extends AppCompatActivity{
         btn4 = findViewById(R.id.button4);
         scoreboard = findViewById(R.id.question);
         startGame();
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.soundtrack);
+        mediaPlayer.start();
     }
     public void mainMenu(View view){
+        mediaPlayer.pause();
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
         finish();
@@ -112,6 +118,7 @@ public class Freestyle extends AppCompatActivity{
     }
     public void startGame (){
         if (!win && !lose){
+            scoreboard.setTextColor(Color.parseColor("#f9f9f9"));
             displayHearts();
             newRound();
             clock();
@@ -322,6 +329,8 @@ public class Freestyle extends AppCompatActivity{
                     }
                 }
                 else {
+                    a = rand.nextInt(10)+1;
+                    b = rand.nextInt(10)+1;
                     option1 = (a+1)*b;
                     option2 = a*(b+1);
                     option3 = a*b+1;
